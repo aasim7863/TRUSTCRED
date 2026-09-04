@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustCred — Student Credential Verification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --ink:#0B0E1C;
+  --ink-2:#131832;
+  --ink-3:#1A2140;
+  --line:#2A3159;
+  --paper-dim:#B4BAD6;
+  --text:#EAEBF7;
+  --text-dim:#8790B8;
+  --teal:#22E0C4;
+  --violet:#8B7CF6;
+  --gold:#E8B34C;
+  --red:#FF6B6B;
+  --display:'Sora', sans-serif;
+  --mono:'JetBrains Mono', monospace;
+  --body:'Inter', sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--text);font-family:var(--body);overflow-x:hidden;}
+::selection{background:var(--teal);color:var(--ink);}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important;}
+}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+.wrap{max-width:1160px;margin:0 auto;padding:0 32px;}
+
+/* ---------- NAV ---------- */
+nav{position:sticky;top:0;z-index:100;background:rgba(11,14,28,0.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-0.01em;}
+.logo-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(145deg,var(--teal),#0f9c86);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);flex-shrink:0;}
+.nav-links{display:flex;gap:36px;font-size:14.5px;color:var(--text-dim);}
+.nav-links a{transition:color .15s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{font-family:var(--mono);font-size:13px;font-weight:500;border:1px solid var(--line);padding:9px 18px;border-radius:7px;color:var(--text);transition:border-color .15s,background .15s;}
+.nav-cta:hover{border-color:var(--teal);background:rgba(34,224,196,0.06);}
+.nav-mobile-hide{display:flex;}
+@media(max-width:760px){.nav-mobile-hide{display:none;}}
+
+/* ---------- HERO ---------- */
+.hero{padding:88px 0 60px;border-bottom:1px solid var(--line);}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+@media(max-width:900px){.hero .wrap{grid-template-columns:1fr;gap:48px;}}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:0.12em;color:var(--teal);text-transform:uppercase;display:flex;align-items:center;gap:9px;margin-bottom:22px;}
+.eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(34,224,196,0.18);animation:pulse-dot 2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.4;}}
+h1{font-family:var(--display);font-size:clamp(34px,4.4vw,54px);line-height:1.08;font-weight:800;letter-spacing:-0.02em;margin-bottom:22px;}
+h1 .accent{color:var(--teal);}
+.hero-sub{font-size:17px;line-height:1.6;color:var(--paper-dim);max-width:480px;margin-bottom:34px;}
+.hero-sub b{color:var(--text);font-weight:600;}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px;}
+.btn-primary{background:var(--teal);color:var(--ink);font-weight:600;font-size:14.5px;padding:13px 22px;border-radius:8px;border:none;display:inline-flex;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(34,224,196,0.22);}
+.btn-secondary{background:transparent;color:var(--text);font-weight:500;font-size:14.5px;padding:13px 22px;border-radius:8px;border:1px solid var(--line);transition:border-color .15s;}
+.btn-secondary:hover{border-color:var(--paper-dim);}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap;}
+.hero-tag{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);border:1px solid var(--line);padding:6px 12px;border-radius:20px;}
+
+/* ---------- CHAIN PANEL (signature element) ---------- */
+.chain-panel{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px -20px rgba(0,0,0,0.6);}
+.chain-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--ink-3);}
+.chain-head-left{display:flex;align-items:center;gap:9px;}
+.chain-dots{display:flex;gap:6px;}
+.chain-dots span{width:8px;height:8px;border-radius:50%;background:var(--line);}
+.chain-title{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:0.02em;}
+.chain-live{font-family:var(--mono);font-size:10.5px;color:var(--teal);display:flex;align-items:center;gap:5px;letter-spacing:0.06em;}
+.chain-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse-dot 1.4s ease-in-out infinite;}
+.chain-body{height:360px;overflow:hidden;position:relative;padding:16px 18px 6px;}
+.chain-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(to top,var(--ink-2),transparent);pointer-events:none;}
+.block{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed rgba(42,49,89,0.6);opacity:0;animation:row-in .5s ease forwards;}
+@keyframes row-in{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.block-icon{width:34px;height:34px;border-radius:9px;background:var(--ink-3);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.block-info{flex:1;min-width:0;}
+.block-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.block-top b{font-family:var(--mono);font-size:12px;color:var(--text);}
+.block-time{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);flex-shrink:0;}
+.block-hash{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:3px;}
+.block-status{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:0.04em;padding:2px 8px;border-radius:20px;text-transform:uppercase;display:inline-block;margin-top:5px;}
+.status-confirmed{background:rgba(34,224,196,0.12);color:var(--teal);}
+.status-pending{background:rgba(232,179,76,0.12);color:var(--gold);}
+.chain-footer{display:flex;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--line);background:var(--ink-3);font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+.chain-footer b{color:var(--text);}
+
+/* ---------- HOW IT WORKS / SECTIONS ---------- */
+.section{padding:96px 0;border-bottom:1px solid var(--line);}
+.section-head{max-width:600px;margin-bottom:56px;}
+.section-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:0.12em;color:var(--teal);text-transform:uppercase;margin-bottom:14px;}
+.section-head h2{font-family:var(--display);font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-0.015em;line-height:1.15;margin-bottom:14px;}
+.section-head p{color:var(--paper-dim);font-size:15.5px;line-height:1.65;}
+
+.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;}
+@media(max-width:900px){.pipeline{grid-template-columns:1fr;}}
+.pipe-step{position:relative;padding:0 18px 0 0;}
+.pipe-step:not(:last-child)::after{content:'';position:absolute;top:23px;right:0;width:100%;height:1px;background:repeating-linear-gradient(to right,var(--line) 0 6px,transparent 6px 11px);z-index:0;}
+@media(max-width:900px){.pipe-step:not(:last-child)::after{display:none;}.pipe-step{padding:0 0 32px 0;}}
+.pipe-num{font-family:var(--mono);font-size:11px;color:var(--ink);width:26px;height:26px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:600;position:relative;z-index:1;margin-bottom:20px;}
+.pipe-step h3{font-family:var(--display);font-size:16px;font-weight:600;margin-bottom:9px;padding-right:8px;}
+.pipe-step p{font-size:13.5px;color:var(--text-dim);line-height:1.55;padding-right:12px;}
+
+/* ---------- FEATURES ---------- */
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+@media(max-width:760px){.feature-grid{grid-template-columns:1fr;}}
+.feature-card{background:var(--ink);padding:32px;transition:background .2s;}
+.feature-card:hover{background:var(--ink-2);}
+.feature-icon{width:38px;height:38px;border-radius:9px;background:var(--ink-3);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.feature-card h3{font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:10px;}
+.feature-card p{font-size:14px;color:var(--text-dim);line-height:1.6;}
+
+/* ---------- STAKEHOLDERS ---------- */
+.stake-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:800px){.stake-grid{grid-template-columns:1fr;}}
+.stake-card{background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:30px;}
+.stake-badge{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:18px;}
+.stake-card h3{font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:10px;}
+.stake-card p{font-size:13.5px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;}
+.stake-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.stake-list li{font-size:12.5px;color:var(--paper-dim);display:flex;gap:8px;align-items:flex-start;}
+.stake-list li::before{content:'→';color:var(--teal);flex-shrink:0;}
+
+/* ---------- DEMO VERIFIER ---------- */
+.demo-wrap{background:var(--ink-2);border:1px solid var(--line);border-radius:16px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:860px){.demo-wrap{grid-template-columns:1fr;padding:26px;}}
+.demo-left h3{font-family:var(--display);font-size:20px;margin-bottom:12px;}
+.demo-left p{font-size:14px;color:var(--text-dim);line-height:1.6;margin-bottom:22px;}
+.demo-input-row{display:flex;gap:10px;margin-bottom:10px;}
+.demo-input{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;}
+.demo-input:focus{border-color:var(--teal);}
+.demo-btn{background:var(--teal);color:var(--ink);border:none;border-radius:8px;padding:0 20px;font-weight:600;font-size:13.5px;white-space:nowrap;}
+.demo-samples{display:flex;gap:8px;flex-wrap:wrap;}
+.sample-chip{font-family:var(--mono);font-size:11px;color:var(--text-dim);border:1px solid var(--line);padding:5px 11px;border-radius:20px;transition:border-color .15s,color .15s;}
+.sample-chip:hover{border-color:var(--paper-dim);color:var(--text);}
+.demo-note{font-size:11.5px;color:var(--text-dim);margin-top:16px;line-height:1.5;}
+.demo-result{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:24px;min-height:280px;}
+.demo-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;color:var(--text-dim);font-size:13px;text-align:center;gap:10px;}
+.demo-verdict-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.demo-verdict-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+.demo-verdict-value{font-family:var(--display);font-size:22px;font-weight:700;}
+.demo-icon-ring{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.demo-checks{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+.demo-check{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--paper-dim);}
+.demo-check .mark{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.demo-hash{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);background:var(--ink-3);border-radius:6px;padding:8px 10px;margin-top:14px;overflow-wrap:break-word;}
+
+/* ---------- CTA / FOOTER ---------- */
+.cta-band{padding:100px 0;text-align:center;border-bottom:1px solid var(--line);}
+.cta-band h2{font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-0.02em;margin-bottom:18px;}
+.cta-band p{color:var(--paper-dim);font-size:16px;max-width:500px;margin:0 auto 34px;line-height:1.6;}
+.cta-band .hero-ctas{justify-content:center;}
+footer{padding:40px 0;}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-left{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12.5px;color:var(--text-dim);}
+.footer-links{display:flex;gap:24px;font-size:13px;color:var(--text-dim);}
+.footer-links a:hover{color:var(--text);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="logo-mark">T</span>TrustCred</div>
+    <div class="nav-links nav-mobile-hide">
+      <a href="#pipeline">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#demo">Verify a credential</a>
+      <a href="#stakeholders">Stakeholders</a>
+    </div>
+    <a class="nav-cta" href="#stakeholders">About the project</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-left">
+      <div class="eyebrow">Credential verification, cryptographically</div>
+      <h1>Credentials that<br>verify <span class="accent">themselves</span> —<br>tamper-proof, by design.</h1>
+      <p class="hero-sub">TrustCred is a distributed-ledger system for academic credential verification — anchoring credential hashes on-chain so <b>students, employers, and institutions</b> can confirm authenticity without a phone call to the registrar.</p>
+      <div class="hero-ctas">
+        <a href="#demo" class="btn-primary">Verify a sample credential →</a>
+        <a href="#pipeline" class="btn-secondary">See how it works</a>
+      </div>
+      <div class="hero-tags">
+        <span class="hero-tag">Tamper-proof by design</span>
+        <span class="hero-tag">Privacy-preserving</span>
+        <span class="hero-tag">Cryptographic verification</span>
+      </div>
+    </div>
+
+    <div class="chain-panel">
+      <div class="chain-head">
+        <div class="chain-head-left">
+          <div class="chain-dots"><span></span><span></span><span></span></div>
+          <div class="chain-title">credential_ledger.log</div>
+        </div>
+        <div class="chain-live">SYNCED</div>
+      </div>
+      <div class="chain-body" id="chainBody"></div>
+      <div class="chain-footer">
+        <span>chain height: <b id="chainHeight">4,882</b></span>
+        <span>last block: <b id="lastBlockTime">—</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pipeline">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">The architecture</div>
+      <h2>From issuance to verification, in five steps</h2>
+      <p>Every credential moves through the same fixed sequence — the ordering is what makes the tamper-evidence work: nothing downstream can be trusted unless everything upstream is intact.</p>
+    </div>
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">1</div>
+        <h3>Issue</h3>
+        <p>The institution issues a digital credential record containing the student's achievement data and issuer signature.</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">2</div>
+        <h3>Hash</h3>
+        <p>The credential content is cryptographically hashed — a fingerprint that changes completely if a single character is altered.</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">3</div>
+        <h3>Anchor on-chain</h3>
+        <p>Only the hash (not the raw credential data) is written to the ledger, timestamped and linked to the previous block.</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">4</div>
+        <h3>Share selectively</h3>
+        <p>The student shares the credential with an employer directly — the chain never stores or exposes the underlying personal data.</p>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">5</div>
+        <h3>Verify</h3>
+        <p>The employer re-hashes the received credential and compares it against the on-chain record — any mismatch means tampering.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">What it does</div>
+      <h2>Built around one core guarantee</h2>
+      <p>Every design decision traces back to a single question: can the record be trusted without trusting a middleman?</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3>Tamper-proof record integrity</h3>
+        <p>Because each block references the hash of the one before it, altering any past credential record would break the chain — making tampering mathematically detectable, not just policy-forbidden.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🕶️</div>
+        <h3>Privacy-preserving verification</h3>
+        <p>The ledger stores only cryptographic hashes, never raw academic records — so verification can happen without exposing grades, personal identifiers, or institutional data publicly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏛️</div>
+        <h3>Decentralized trust model</h3>
+        <p>No single institution or intermediary needs to be contacted to confirm authenticity — verification is possible directly against the shared ledger.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎓</div>
+        <h3>Designed for three stakeholders</h3>
+        <p>The system is architected around the actual verification triangle — students who own their credentials, institutions who issue them, and employers who need to trust them quickly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="demo">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">See it work</div>
+      <h2>Run a credential through the verifier</h2>
+      <p>A simplified illustration of the hash-comparison logic — try a sample to see how a genuine vs. tampered credential resolves.</p>
+    </div>
+    <div class="demo-wrap">
+      <div class="demo-left">
+        <h3>Credential verifier</h3>
+        <p>This demo simulates the re-hash-and-compare step client-side, in your browser. It illustrates the verification logic — it isn't connected to a live distributed ledger.</p>
+        <div class="demo-input-row">
+          <input type="text" class="demo-input" id="credInput" placeholder="enter a credential ID, e.g. CRED-2024-0192">
+          <button class="demo-btn" id="verifyBtn">Verify</button>
+        </div>
+        <div class="demo-samples">
+          <span class="sample-chip" data-id="CRED-2024-0192">valid sample</span>
+          <span class="sample-chip" data-id="CRED-2024-0177-ALTERED">tampered sample</span>
+          <span class="sample-chip" data-id="CRED-2099-UNKNOWN">unissued sample</span>
+        </div>
+        <p class="demo-note">Illustrative only — this in-browser demo does not query a live distributed ledger the way a deployed version would.</p>
+      </div>
+      <div class="demo-result" id="demoResult">
+        <div class="demo-placeholder">
+          <div style="font-size:26px;">⛓</div>
+          <div>Enter a credential ID or pick a sample<br>to see a verification result</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="stakeholders">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eyebrow">Who it's for</div>
+      <h2>Three sides of the same problem</h2>
+      <p>Credential fraud and slow verification cost time and trust for everyone in the chain — TrustCred is designed to shorten that chain.</p>
+    </div>
+    <div class="stake-grid">
+      <div class="stake-card">
+        <div class="stake-badge" style="background:rgba(34,224,196,0.12);color:var(--teal);">🎓</div>
+        <h3>Students</h3>
+        <p>Own a verifiable, portable record of their credentials that they control and share directly.</p>
+        <ul class="stake-list">
+          <li>Share credentials without waiting on registrar processing</li>
+          <li>Keep control over who sees underlying academic data</li>
+        </ul>
+      </div>
+      <div class="stake-card">
+        <div class="stake-badge" style="background:rgba(139,124,246,0.14);color:var(--violet);">🏢</div>
+        <h3>Employers</h3>
+        <p>Confirm a candidate's credential is genuine without a manual verification request to the institution.</p>
+        <ul class="stake-list">
+          <li>Instant hash-based authenticity check</li>
+          <li>Lower risk of accepting fabricated qualifications</li>
+        </ul>
+      </div>
+      <div class="stake-card">
+        <div class="stake-badge" style="background:rgba(232,179,76,0.14);color:var(--gold);">🏛️</div>
+        <h3>Institutions</h3>
+        <p>Issue credentials once, with tamper-evidence built in, instead of fielding repeated manual verification requests.</p>
+        <ul class="stake-list">
+          <li>Reduce verification workload on registrar staff</li>
+          <li>Strengthen institutional credibility against forged records</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <div class="section-eyebrow" style="justify-content:center;display:flex;">About the project</div>
+    <h2>A credential you don't<br>have to take on trust.</h2>
+    <p>A distributed-ledger architecture applied to a real institutional trust problem.</p>
+    <div class="hero-ctas">
+      <a href="#demo" class="btn-primary">Try the verifier demo →</a>
+      <a href="#pipeline" class="btn-secondary">Read the architecture</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-left"><span class="logo-mark" style="width:20px;height:20px;font-size:10px;">T</span>TrustCred — credential verification</div>
+    <div class="footer-links">
+      <a href="#pipeline">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#stakeholders">Stakeholders</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ---------- Live chain simulation ----------
+const chainBody = document.getElementById('chainBody');
+const chainHeightEl = document.getElementById('chainHeight');
+const lastBlockTimeEl = document.getElementById('lastBlockTime');
+let chainHeight = 4882;
+
+const blockSamples = [
+  {label:'B.Tech CSE Degree', issuer:'Institution Registrar', status:'confirmed'},
+  {label:'Semester Transcript', issuer:'Institution Registrar', status:'confirmed'},
+  {label:'Certification Record', issuer:'Training Partner', status:'confirmed'},
+  {label:'Credential Hash Anchor', issuer:'Ledger Node', status:'pending'},
+  {label:'Diploma Verification', issuer:'Employer Request', status:'confirmed'},
+  {label:'Course Completion', issuer:'Institution Registrar', status:'confirmed'},
+  {label:'Credential Revocation Check', issuer:'Ledger Node', status:'pending'},
+];
+
+function pad(n){return n.toString().padStart(2,'0');}
+function randHash(){
+  const chars='0123456789abcdef';
+  let h='0x';
+  for(let i=0;i<40;i++) h+=chars[Math.floor(Math.random()*chars.length)];
+  return h;
+}
+
+function addBlock(){
+  const s = blockSamples[Math.floor(Math.random()*blockSamples.length)];
+  const now = new Date();
+  const time = pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+  chainHeight++;
+
+  const row = document.createElement('div');
+  row.className = 'block';
+  const statusCls = s.status === 'confirmed' ? 'status-confirmed' : 'status-pending';
+  row.innerHTML = `
+    <div class="block-icon">${s.status === 'confirmed' ? '✓' : '⋯'}</div>
+    <div class="block-info">
+      <div class="block-top"><b>#${chainHeight} · ${s.label}</b><span class="block-time">${time}</span></div>
+      <div class="block-hash">${randHash()}</div>
+      <div class="block-status ${statusCls}">${s.status}</div>
+    </div>
+  `;
+  chainBody.insertBefore(row, chainBody.firstChild);
+  while(chainBody.children.length > 10){ chainBody.removeChild(chainBody.lastChild); }
+
+  chainHeightEl.textContent = chainHeight.toLocaleString();
+  lastBlockTimeEl.textContent = time;
+}
+
+for(let i=0;i<6;i++){ addBlock(); }
+setInterval(addBlock, 2800);
+
+// ---------- Credential verifier demo ----------
+const credInput = document.getElementById('credInput');
+const verifyBtn = document.getElementById('verifyBtn');
+const demoResult = document.getElementById('demoResult');
+const chips = document.querySelectorAll('.sample-chip');
+
+function verifyCredential(raw){
+  const id = raw.trim();
+  if(!id) return null;
+
+  const upper = id.toUpperCase();
+  let result;
+
+  if(upper.includes('ALTERED') || upper.includes('TAMPER')){
+    result = {
+      state:'TAMPERED', icon:'✕', color:'var(--red)',
+      checks:[
+        {label:'Credential ID format valid', ok:true},
+        {label:'On-chain anchor found', ok:true},
+        {label:'Re-computed hash matches ledger record', ok:false},
+        {label:'Issuer signature valid', ok:true},
+      ],
+      note:'Hash mismatch detected — this credential\'s content does not match what was originally anchored on-chain.'
+    };
+  } else if(upper.includes('UNKNOWN') || upper.startsWith('CRED-2099')){
+    result = {
+      state:'NOT FOUND', icon:'?', color:'var(--gold)',
+      checks:[
+        {label:'Credential ID format valid', ok:true},
+        {label:'On-chain anchor found', ok:false},
+        {label:'Re-computed hash matches ledger record', ok:false},
+        {label:'Issuer signature valid', ok:false},
+      ],
+      note:'No matching record exists on the ledger for this credential ID — it may not have been issued, or the ID was entered incorrectly.'
+    };
+  } else {
+    result = {
+      state:'VERIFIED', icon:'✓', color:'var(--teal)',
+      checks:[
+        {label:'Credential ID format valid', ok:true},
+        {label:'On-chain anchor found', ok:true},
+        {label:'Re-computed hash matches ledger record', ok:true},
+        {label:'Issuer signature valid', ok:true},
+      ],
+      note:'This credential\'s hash matches the record anchored on-chain at issuance — content is unaltered.'
+    };
+  }
+  return {id, ...result, hash: randHashFor(id)};
+}
+
+function randHashFor(seed){
+  let h=0;
+  for(let i=0;i<seed.length;i++){ h = (h*31 + seed.charCodeAt(i)) >>> 0; }
+  const chars='0123456789abcdef';
+  let out='0x';
+  for(let i=0;i<40;i++){ h = (h*1103515245 + 12345) >>> 0; out += chars[h % 16]; }
+  return out;
+}
+
+function renderResult(res){
+  if(!res){
+    demoResult.innerHTML = `<div class="demo-placeholder"><div style="font-size:26px;">⛓</div><div>Enter a credential ID or pick a sample<br>to see a verification result</div></div>`;
+    return;
+  }
+  const checksHtml = res.checks.map(c => `
+    <div class="demo-check">
+      <span class="mark" style="background:${c.ok ? 'rgba(34,224,196,0.15)' : 'rgba(255,107,107,0.15)'};color:${c.ok ? 'var(--teal)' : 'var(--red)'};">${c.ok ? '✓' : '!'}</span>
+      ${c.label}
+    </div>
+  `).join('');
+
+  demoResult.innerHTML = `
+    <div class="demo-verdict-row">
+      <div>
+        <div class="demo-verdict-label">${res.id}</div>
+        <div class="demo-verdict-value" style="color:${res.color};">${res.state}</div>
+      </div>
+      <div class="demo-icon-ring" style="background:${res.color}22;color:${res.color};border:2px solid ${res.color};">${res.icon}</div>
+    </div>
+    <div class="demo-checks">${checksHtml}</div>
+    <div class="demo-hash">computed hash: ${res.hash}</div>
+    <p style="font-size:12px;color:var(--text-dim);margin-top:14px;line-height:1.55;">${res.note}</p>
+  `;
+}
+
+function runVerify(){
+  const val = credInput.value;
+  renderResult(verifyCredential(val));
+}
+
+verifyBtn.addEventListener('click', runVerify);
+credInput.addEventListener('keydown', e => { if(e.key === 'Enter') runVerify(); });
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    credInput.value = chip.dataset.id;
+    runVerify();
+  });
+});
+</script>
+
+</body>
+</html>
